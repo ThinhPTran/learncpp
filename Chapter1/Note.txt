@@ -1,0 +1,10 @@
+C++ can be consider as a combination of four sublanguages:
+
++ C: way down deep, C++ is still based on C.
++ Object-Oriented C++: This part of C++ is what C with Classes was all about: classes (including constructors and destructors), encapsulation, inheritance, polymorphism, virtual functions, etc.
++ Template C++: This is the generic programming part of C++, the one that most programmers have the least experience with.
++ STL: The STL is a template library, of course, but it's a very special template library. Its conventions regarding containers, iterators, algorithms, and function objects mesh beautifully.
+
+
+
+
