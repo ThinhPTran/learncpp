@@ -1,9 +1,129 @@
-C++ can be consider as a combination of four sublanguages:
+1) C++ can be consider as a combination of four sublanguages:
 
 + C: way down deep, C++ is still based on C.
 + Object-Oriented C++: This part of C++ is what C with Classes was all about: classes (including constructors and destructors), encapsulation, inheritance, polymorphism, virtual functions, etc.
 + Template C++: This is the generic programming part of C++, the one that most programmers have the least experience with.
 + STL: The STL is a template library, of course, but it's a very special template library. Its conventions regarding containers, iterators, algorithms, and function objects mesh beautifully.
+
+2) Prefer consts, enums, and inlines to #defines
+
+This might better be called "prefer the compiler to the preprocessor", because #define may be treated as if it's not part of the language. When you do something like this.
+
+#define ASPECT_RATIO 1.653
+
+the symbolic name ASPECT_RATIO may never seen by compiler; it may be removed by the preprocessor before the source code ever gets to a compiler. This can be confusing if you get an error during compilation involving the use of the constant, because the error message may refer to 1.653 instead of ASPECT_RATIO.
+
+The solution is to replace the macro with a constant:
+
+const double AspectRatio = 1.653;
+
+To define a constant char*-based string in a header file, for example, you have to write const twice:
+
+const char * const authorName = "Scott Meyers";
+
+String objects are generally preferable to their char*-based
+
+const std::string authorName("Scott Meyers");
+
+For class specific constants. To limit the scope of a constant to a class, you must make it a member, and to ensure there's most one copy ot the constant, you must make it a static member:
+
+class GamePlayer {
+  static const int NumTurns = 5;   // constant declaration
+  int scores[NumTurns];            // Use of constant
+  ...
+};
+
+Older compiler may not accept the above declaration.
+
+const int GamePlayer::Numturns; // Definition of NumTurns doesn't have any value.
+
+For older compiler, it should be:
+
+class CostEstimate {
+private:
+  static const double FudgeFactor;
+  ....
+};
+
+const double
+  CostEstimate::FudgeFactor = 1.35;
+
+This is all you need almost all the time. The only exception is when you need the value of a class constant during compilation of the class such as in the case of GamePlayer class above.
+
+class GamePlayer {
+private:
+  enum { NumTurns = 5};
+
+  int scores[NumTurns];
+  ...
+};
+
+This is called enum hack. If you don't want to let people get a pointer or reference to one of your integral constants, an enum is a good way to enforce that constraint. 
+
+#define CALL_WITH_MAX(a,b) f((a) > (b) ? (a):(b))
+
+Macros like this have so many drawbacks, just thinking about them is painful.
+
+Whenever you write this kind of macro, you have to remember to parenthesize all the arguments in the macro body. Otherwise you can run into trouble when somebody calls the macro with an expression. But even if you get that right, look at the weird things that can happen:
+
+int a = 5, b = 0;
+CALL_WITH_MAX(++a,b);       // a is incremented twice.
+CALL_WITH_MAX(++a,b+10);    // a is incrementeed once. 
+
+Here, the number of times that a is incremented before calling f depends on what it is being compared with!
+
+Fortunately, you don't need to put up with this nonsense. You can get all the efficiency of a macro plus all the predictable behavior and type safety of a regular function by using a template for an inline function.
+
+template<typename T>
+inline void callWithMax(const T& a, const T& b)
+{
+  f(a>b ? a:b); 
+}
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
