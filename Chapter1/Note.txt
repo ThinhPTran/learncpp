@@ -80,7 +80,39 @@ inline void callWithMax(const T& a, const T& b)
   f(a>b ? a:b); 
 }
 
- 
+Thing to remember
++ For simple constants, prefer const objects or enums to #defines.
++ For function-like macros, prefer inline functions to #defines.
+
+-> Prefer compiler to preprocessor.
+
+3) Use const whenever possible.
+The wonderful thing about const is that it allows you to specify a semantic constraint -- a particular object should not be modified -- and compilers will enforce that constraint. It allows you to commmunicate to both compilers and other programmers that a value should remain invariant.
+
+char greeting[]="Hello";
+char * p = greeting; // non-const pointer, non-const data
+const char *p = greeting; //non-const pointer, const data
+char* const p = greeting; //const pointer, non-const data
+const char * const p = greeting; // const pointer, const data
+
+void f1(const Widget *pw);    //f1 takes a pointer to a const Widget object.
+void f2(Widget const *pw);    //so does f2
+void f3(Widget * const pw);   //f1 takes a constant pointer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
