@@ -99,6 +99,28 @@ void f1(const Widget *pw);    //f1 takes a pointer to a const Widget object.
 void f2(Widget const *pw);    //so does f2
 void f3(Widget * const pw);   //f1 takes a constant pointer.
 
+STL iterators are modeled on pointers, so an iterator acts much like a T* pointer. Declaring an iterator const is like declaring a pointer const.
+
+std::vector<int> vec;
+...
+
+const std::vector<int>::iterator iter = vec.begin();  // iter acts like a T* const
+*iter = 10;            // OK, changes what iter points to
+++iter;                // error! iter is const.
+
+std::vector<int>::const_iterator citer = vec.begin();  // iter acts like a const T*
+*citer = 10;           // Error! *citer is const
+++citer;               // fine, change citer;
+
+ 
+
+
+
+
+
+
+
+
 
 
 
