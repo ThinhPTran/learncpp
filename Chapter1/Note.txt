@@ -112,6 +112,36 @@ std::vector<int>::const_iterator citer = vec.begin();  // iter acts like a const
 *citer = 10;           // Error! *citer is const
 ++citer;               // fine, change citer;
 
+Having a function return a constant value is generally inappropriate, but sometimes doing so can reduce the incidence of client erros without giving up safety or efficiency.
+
+class Rational{...};
+const Rational operator*(const Rational& lhs, const Rational& rhs);
+
+Why should the result of operator* be a const object? Because if it weren't, clients would be able to commit atrocities like this:
+
+Rational a, b, c;
+...
+(a*b)=c;          // invoke operator= on the result of a*b!!!!!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
 
 
