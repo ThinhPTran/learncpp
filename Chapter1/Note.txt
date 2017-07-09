@@ -123,6 +123,55 @@ Rational a, b, c;
 ...
 (a*b)=c;          // invoke operator= on the result of a*b!!!!!
 
+All it takes is a simple typo (and a type that can be implicitly converted to bool):
+
+if(a*b=c)...
+
+const Member Functions
+
+The purpose of const on member functions it so identify which member function may be invoked on const objects. Such member functions are important for two reasons. First, they make the interface of a class easier to understand. It's important to know which functions may modify an object and which may not. Second, they make it possible to work with const objects. One of the fundamental ways to improve a C++ program's performance is to pass objects by reference-to-const.
+
+class TextBlock {
+public:
+ ...
+ const char& operator[](std:size_t position) const       //operator[] for
+ {return text[position];}                                //const objects.
+ char& operator[](std:size_t position)                   //operator[] for
+ {return text[position];}                                //non-const objects
+private:
+ std:string text;
+};
+
+TextBlock's operator[]s can be used like this:
+TextBlock tb("Hello"); 
+std::cout << tb[0];                // calls non-const
+                                   // TextBlock::operator[]
+
+const TextBlock ctb("World");
+std:cout << ctb[0];                // calls const TextBlock::operator[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
