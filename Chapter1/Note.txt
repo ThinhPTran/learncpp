@@ -150,6 +150,87 @@ std::cout << tb[0];                // calls non-const
 const TextBlock ctb("World");
 std:cout << ctb[0];                // calls const TextBlock::operator[]
 
+Incidentally, const objects most often arise in real programs as a result of being passed by pointer - or reference-to-const. The example of ctb above is artificial. This is more realistic:
+
+void print(const TextBlock& ctb) {      // in this function, ctb is const
+  std::cout << ctb[0];                  // calls const TextBlock::operator[];
+  ...
+}
+
+By overloading operator[] and giving the different versions different return types, you can have const and non-const TextBlocks handled differently:
+
+std::cout << tb[0];                     // fine - reading a
+                                        // non-const TextBlock
+tb[0]='x';                              // fine - writing a
+                                        // non-const TextBlock
+std::cout << ctb[0];                    // fine - reading a
+                                        // const TextBlock
+ctb[0]='x';                             // error! - writing a
+                                        // const TextBlock
+
+Note that the error here has only to do with the return type of the operator[]
+that is called; the calls to operator[] themselves are all fine. The error arises out of an attempt to make an assignment to a const char&, because that's the return type from the const version of operator[].
+
+Also note that the return type of the non-const operator[] is a reference to a char - a char itself would not do. If operator[] did return a simple char, statements like this wouldn't compile:
+
+tb[0]='x';
+
+That's because it's never legal to modify the return value of a function that returns a built-in type. Even if it were legal, the fact that C++ returns objects by value would mean that a copy of tb.text[0] would be modified, not tb.text[0] itself, and that's not the behavior you want.
+
+class CTextBlock {
+public:
+  ...
+  char& operator[](std::size_t position) const   // inappropriate (but bitwise
+  {return pText[position];}                      // const) declaration of
+                                                 // operator[]
+private:
+  char* pText; 
+};
+
+const CTextBlock cctb("Hello");                  // declare constant object
+char *pc = &cctb[0];                             // call the const operator[]
+                                                 // to get a pointer to
+                                                 // cctb's data
+*pc='J';                                         // cctb now has the value "Jello"
+
+Surely there is something wrong when you create a constant object with a particular value and you invoke only const member functions on it, yet you still change its value!
+
+This lead to the notion of logical constness. You can argue that a const member function might modify some of the bits in the object on which it's invoked, but only in ways that clients cannot detect.
+
+class CTextBlock {
+public:
+  ...
+  std::size_t length() const;
+private:
+  char *pText;
+  std::size_t textLength;
+  bool lengthIsValid; 
+};
+
+std::size_t CTextBlock::length() const
+{
+  if(!lengthIsValid) {
+    textLength = std::strlen(pText); // error! can't assign to textLength
+    lengthIsValid = true;            // and lengthIsValid in a const 
+  }                                  // member function
+  return textLength; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
